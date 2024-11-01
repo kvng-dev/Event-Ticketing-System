@@ -54,9 +54,9 @@ Install Dependencies:
 
 Navigate to the project directory and install the required packages:
 
-bash
+    bash
 
-npm install
+    npm install
 
 Setup Environment Variables:
 
@@ -72,7 +72,7 @@ Run the Application:
 
 Start the server using:
 
-bash
+    bash
 
     npm start
 
@@ -177,9 +177,9 @@ Running Tests
 
 To ensure the application works as expected, tests can be run using:
 
-bash
+    bash
 
-npm test
+    npm test
 
 The test suite includes tests for user authentication, event management, and error handling, utilizing Jest and Supertest for HTTP assertions.
 Contribution Guidelines
