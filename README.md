@@ -47,8 +47,8 @@ Steps
 
     bash
 
-git clone https://github.com/yourusername/event-ticketing-system.git
-cd event-ticketing-system
+    git clone https://github.com/yourusername/event-ticketing-system.git
+    cd event-ticketing-system
 
 Install Dependencies:
 
@@ -64,9 +64,9 @@ Create a .env file in the root directory with the following content:
 
 plaintext
 
-MONGO_URI=mongodb://<username>:<password>@localhost:27017/event_ticketing
+    MONGO_URI=mongodb://<username>:<password>@localhost:27017/event_ticketing
 
-Replace <username> and <password> with your MongoDB credentials.
+    Replace <username> and <password> with your MongoDB credentials.
 
 Run the Application:
 
