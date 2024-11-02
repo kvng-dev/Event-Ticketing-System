@@ -1,5 +1,8 @@
 # Event-Ticketing-System
 
+
+
+Event Ticketing System
 This project is an event ticket booking system built with Node.js, Express, MongoDB, and Mongoose. It allows users to register, log in, book event tickets, and allows administrators to create, update, and delete events. This README provides a comprehensive guide to setting up and using the API.
 
 Table of Contents
