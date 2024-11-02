@@ -3,23 +3,23 @@ Event Ticketing System
 An advanced Event Ticketing System built with Node.js, Express, and MongoDB. This application enables users to register and book tickets for events while providing administrators with capabilities to manage events (create, update, and delete events). The system includes JWT-based authentication, role-based access, and detailed API documentation for easy integration.
 Table of Contents
 
-    Project Overview
-    Technologies Used
-    Project Structure
-    Getting Started
+    -Project Overview
+    -Technologies Used
+    -Project Structure
+    -Getting Started
         Prerequisites
         Installation
         Environment Variables
-    API Documentation
+    -API Documentation
         Authentication Endpoints
         User Endpoints
         Event Endpoints
-    Middleware
-    Testing
-    Deployment
-    Contributing
-    Troubleshooting
-    License
+    -Middleware
+    -Testing
+    -Deployment
+    -Contributing
+    -Troubleshooting
+    -License
 
 Project Overview
 
@@ -42,15 +42,15 @@ Project Structure
 
 bash
 
-├── controllers       # API request handlers for business logic
-├── middleware        # Middleware for authentication, error handling, etc.
-├── models            # Mongoose schema and models for MongoDB collections
-├── routes            # API endpoint route definitions
-├── tests             # Integration and unit tests
-├── utils             # Utility functions and helpers
-├── .env              # Environment variables (not included in version control)
-├── server.js         # Main entry point for the server
-└── README.md         # Project documentation
+        ├── controllers       # API request handlers for business logic
+        ├── middleware        # Middleware for authentication, error handling, etc.
+        ├── models            # Mongoose schema and models for MongoDB collections
+        ├── routes            # API endpoint route definitions
+        ├── tests             # Integration and unit tests
+        ├── utils             # Utility functions and helpers
+        ├── .env              # Environment variables (not included in version control)
+        ├── server.js         # Main entry point for the server
+        └── README.md         # Project documentation
 
 Getting Started
 Prerequisites
@@ -60,12 +60,12 @@ Prerequisites
 
 Installation
 
-    Clone the repository:
+Clone the repository:
 
-    bash
+bash
 
-git clone <repo-url>
-cd event-ticket-system
+        git clone <repo-url>
+        cd event-ticket-system
 
 Install the required dependencies:
 
@@ -85,15 +85,15 @@ Example .env file:
 
 makefile
 
-MONGO_URI=mongodb://localhost:27017/event-system
-JWT_SECRET=your_jwt_secret
-PORT=3000
+    MONGO_URI=mongodb://localhost:27017/event-system
+    JWT_SECRET=your_jwt_secret
+    PORT=3000
 
 Start the Server
 
 bash
 
-npm start
+    npm start
 
 API Documentation
 Authentication Endpoints
@@ -165,16 +165,16 @@ Create Event (Admin Only)
     Headers: Authorization: Bearer <JWT>
     Request Body:
 
-    json
+json
 
-{
-  "eventName": "Charity Run",
-  "address": "City Park, Chicago, IL",
-  "eventDate": "2025-04-10T08:00:00Z",
-  "price": 25,
-  "desc": "Support local charities.",
-  "totalTickets": 100
-}
+    {
+      "eventName": "Charity Run",
+      "address": "City Park, Chicago, IL",
+      "eventDate": "2025-04-10T08:00:00Z",
+      "price": 25,
+      "desc": "Support local charities.",
+      "totalTickets": 100
+    }
 
 Response:
 
@@ -243,7 +243,7 @@ The application includes a test suite built with Mocha, Chai, and Supertest. Tes
 
 bash
 
-npm test
+    npm test
 
 Deployment
 
