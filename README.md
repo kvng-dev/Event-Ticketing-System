@@ -14,14 +14,14 @@ Testing
 Project Structure
 bash
 Copy code
-├── controllers # Request handlers for API routes
-├── middleware # Custom middleware (authentication, error handling)
-├── models # Mongoose schema and model definitions
-├── routes # API route definitions
-├── utils # Utility functions and helpers
-├── .env # Environment variables (not committed)
-├── server.js # Main server file
-└── README.md # Project documentation
+├── controllers         # Request handlers for API routes
+├── middleware          # Custom middleware (authentication, error handling)
+├── models              # Mongoose schema and model definitions
+├── routes              # API route definitions
+├── utils               # Utility functions and helpers
+├── .env                # Environment variables (not committed)
+├── server.js           # Main server file
+└── README.md           # Project documentation
 Getting Started
 Prerequisites
 Node.js (v14+ recommended)
@@ -46,10 +46,10 @@ bash
 Copy code
 npm start
 Environment Variables
-Variable Description
-MONGO_URI MongoDB connection URI
-JWT_SECRET Secret key for JWT generation
-PORT Port for the server (default: 3000)
+Variable	Description
+MONGO_URI	MongoDB connection URI
+JWT_SECRET	Secret key for JWT generation
+PORT	Port for the server (default: 3000)
 API Documentation
 Authentication
 The authentication system is JWT-based. Upon successful login, the server will issue a token, which should be included in subsequent requests for protected routes.
@@ -62,16 +62,16 @@ Body:
 json
 Copy code
 {
-"username": "user123",
-"email": "user@example.com",
-"password": "password123",
-"isAdmin": false
+  "username": "user123",
+  "email": "user@example.com",
+  "password": "password123",
+  "isAdmin": false
 }
 Response:
 json
 Copy code
 {
-"message": "User registered successfully"
+  "message": "User registered successfully"
 }
 Login User
 URL: /api/users/login
@@ -80,15 +80,15 @@ Body:
 json
 Copy code
 {
-"email": "user@example.com",
-"password": "password123"
+  "email": "user@example.com",
+  "password": "password123"
 }
 Response:
 json
 Copy code
 {
-"message": "Login successful",
-"token": "jwt_token"
+  "message": "Login successful",
+  "token": "jwt_token"
 }
 Events
 Create Event (Admin Only)
@@ -99,25 +99,25 @@ Body:
 json
 Copy code
 {
-"eventName": "Charity Run",
-"address": "City Park, Chicago, IL",
-"eventDate": "2025-04-10T08:00:00Z",
-"price": 25,
-"desc": "Participate in a fun run to support local charities.",
-"totalTickets": 100
+  "eventName": "Charity Run",
+  "address": "City Park, Chicago, IL",
+  "eventDate": "2025-04-10T08:00:00Z",
+  "price": 25,
+  "desc": "Participate in a fun run to support local charities.",
+  "totalTickets": 100
 }
 Response:
 json
 Copy code
 {
-"\_id": "event_id",
-"eventName": "Charity Run",
-"address": "City Park, Chicago, IL",
-"eventDate": "2025-04-10T08:00:00Z",
-"price": 25,
-"desc": "Participate in a fun run to support local charities.",
-"totalTickets": 100,
-"availableTickets": 100
+  "_id": "event_id",
+  "eventName": "Charity Run",
+  "address": "City Park, Chicago, IL",
+  "eventDate": "2025-04-10T08:00:00Z",
+  "price": 25,
+  "desc": "Participate in a fun run to support local charities.",
+  "totalTickets": 100,
+  "availableTickets": 100
 }
 Get All Events
 URL: /api/events
@@ -126,15 +126,15 @@ Response:
 json
 Copy code
 [
-{
-"_id": "event_id",
-"eventName": "Charity Run",
-"address": "City Park, Chicago, IL",
-"eventDate": "2025-04-10T08:00:00Z",
-"price": 25,
-"desc": "Fun run for charity.",
-"availableTickets": 90
-}
+  {
+    "_id": "event_id",
+    "eventName": "Charity Run",
+    "address": "City Park, Chicago, IL",
+    "eventDate": "2025-04-10T08:00:00Z",
+    "price": 25,
+    "desc": "Fun run for charity.",
+    "availableTickets": 90
+  }
 ]
 Get Event by ID
 URL: /api/event/:id
@@ -143,13 +143,13 @@ Response:
 json
 Copy code
 {
-"\_id": "event_id",
-"eventName": "Charity Run",
-"address": "City Park, Chicago, IL",
-"eventDate": "2025-04-10T08:00:00Z",
-"price": 25,
-"desc": "Fun run for charity.",
-"availableTickets": 90
+  "_id": "event_id",
+  "eventName": "Charity Run",
+  "address": "City Park, Chicago, IL",
+  "eventDate": "2025-04-10T08:00:00Z",
+  "price": 25,
+  "desc": "Fun run for charity.",
+  "availableTickets": 90
 }
 Update Event (Admin Only)
 URL: /api/event/:id
@@ -159,19 +159,19 @@ Body:
 json
 Copy code
 {
-"eventName": "Updated Event Name",
-"price": 30
+  "eventName": "Updated Event Name",
+  "price": 30
 }
 Response:
 json
 Copy code
 {
-"message": "Event updated successfully",
-"updatedEvent": {
-"\_id": "event_id",
-"eventName": "Updated Event Name",
-"price": 30
-}
+  "message": "Event updated successfully",
+  "updatedEvent": {
+    "_id": "event_id",
+    "eventName": "Updated Event Name",
+    "price": 30
+  }
 }
 Delete Event (Admin Only)
 URL: /api/event/:id
@@ -181,7 +181,7 @@ Response:
 json
 Copy code
 {
-"message": "Event deleted successfully"
+  "message": "Event deleted successfully"
 }
 Book an Event
 URL: /api/event/:id/book
@@ -191,8 +191,8 @@ Response:
 json
 Copy code
 {
-"message": "Event booked successfully",
-"remainingTickets": 89
+  "message": "Event booked successfully",
+  "remainingTickets": 89
 }
 Testing
 To run tests for the application, use:
