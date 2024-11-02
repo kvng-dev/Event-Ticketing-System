@@ -1,197 +1,210 @@
 # Event-Ticketing-System
 
-Overview
+This project is an event ticket booking system built with Node.js, Express, MongoDB, and Mongoose. It allows users to register, log in, book event tickets, and allows administrators to create, update, and delete events. This README provides a comprehensive guide to setting up and using the API.
 
-The Event Ticketing System is a web application designed to facilitate the creation, management, and booking of events. This platform allows administrators to manage events efficiently while providing users with a seamless experience for booking tickets. The system includes user authentication, role-based access control, and robust error handling.
-Features
-
-    User Authentication:
-        Users can register and log in as either a normal user or an admin.
-        Passwords are securely hashed before storage.
-
-    Admin Controls:
-        Admins have special privileges to create, update, delete, and view all events.
-        Admins can view all registered users.
-
-    Event Management:
-        Create new events with details such as name, address, date, price, and capacity.
-        Update existing events to reflect changes in details or availability.
-        Delete events that are no longer needed.
-
-    Event Booking:
-        Users can book tickets for available events.
-        The system ensures that the number of bookings does not exceed the event's capacity.
-
-    Error Handling:
-        Comprehensive error handling for all operations, providing meaningful error messages to users.
-
-Technologies Used
-
-    Node.js: A JavaScript runtime environment for building the server.
-    Express: A web framework for Node.js to create APIs.
-    MongoDB: A NoSQL database for storing user and event data.
-    Mongoose: An ODM library for MongoDB, providing a schema-based solution for data modeling.
-    Jest: A testing framework for writing and running tests.
-    Supertest: A testing library for HTTP assertions.
-
-Installation
+Table of Contents
+Project Structure
+Getting Started
+Environment Variables
+API Documentation
+Authentication
+Users
+Events
+Testing
+Project Structure
+bash
+Copy code
+├── controllers # Request handlers for API routes
+├── middleware # Custom middleware (authentication, error handling)
+├── models # Mongoose schema and model definitions
+├── routes # API route definitions
+├── utils # Utility functions and helpers
+├── .env # Environment variables (not committed)
+├── server.js # Main server file
+└── README.md # Project documentation
+Getting Started
 Prerequisites
-
-    Node.js: Ensure you have Node.js installed (v14 or higher).
-    MongoDB: You can use a local instance or a cloud service (like MongoDB Atlas).
-    npm: Node Package Manager is included with Node.js.
-
-Steps
-
-    Clone the Repository:
-
-    bash
-
-git clone https://github.com/yourusername/event-ticketing-system.git
-cd event-ticketing-system
-
-Install Dependencies:
-
-Navigate to the project directory and install the required packages:
+Node.js (v14+ recommended)
+MongoDB (local or cloud instance)
+Installation
+Clone the repository:
 
 bash
+Copy code
+git clone <repo-url>
+cd event-ticket-system
+Install dependencies:
 
+bash
+Copy code
 npm install
+Create a .env file in the root directory and set the required environment variables as described below.
 
-Setup Environment Variables:
-
-Create a .env file in the root directory with the following content:
-
-plaintext
-
-MONGO_URI=mongodb://<username>:<password>@localhost:27017/event_ticketing
-
-Replace <username> and <password> with your MongoDB credentials.
-
-Run the Application:
-
-Start the server using:
+Start the server:
 
 bash
+Copy code
+npm start
+Environment Variables
+Variable Description
+MONGO_URI MongoDB connection URI
+JWT_SECRET Secret key for JWT generation
+PORT Port for the server (default: 3000)
+API Documentation
+Authentication
+The authentication system is JWT-based. Upon successful login, the server will issue a token, which should be included in subsequent requests for protected routes.
 
-    npm start
-
-    The application will be accessible at http://localhost:5000.
-
-API Endpoints
-User Authentication
-
-    POST /api/users/register
-        Description: Register a new user (admin or normal).
-        Request Body:
-
-        json
-
-    {
-      "username": "string",
-      "email": "string",
-      "password": "string",
-      "isAdmin": "boolean"  // Optional for admin registration
-    }
-
-    Responses:
-        201 Created: User registered successfully.
-        400 Bad Request: Invalid input or user already exists.
-
-POST /api/users/login
-
-    Description: Log in a registered user.
-    Request Body:
-
-    json
-
-        {
-          "email": "string",
-          "password": "string"
-        }
-
-        Responses:
-            200 OK: Login successful, returns a token.
-            401 Unauthorized: Invalid credentials.
-
-Event Management
-
-    POST /api/event
-        Description: Create a new event (admin only).
-        Request Body:
-
-        json
-
-        {
-          "eventName": "string",
-          "address": "string",
-          "eventDate": "string", // Format: ISO 8601 (e.g., "2025-04-10T08:00:00Z")
-          "price": "number",
-          "desc": "string",
-          "capacity": "number",
-          "currentBookings": "number" // Default: 0
-        }
-
-        Responses:
-            201 Created: Event created successfully.
-            400 Bad Request: Invalid event data.
-
-    PUT /api/event/:id
-        Description: Update an existing event (admin only).
-        Request Body: Same structure as for creating an event.
-        Responses:
-            200 OK: Event updated successfully.
-            404 Not Found: Event does not exist.
-
-    DELETE /api/event/:id
-        Description: Delete an existing event (admin only).
-        Responses:
-            200 OK: Event deleted successfully.
-            404 Not Found: Event does not exist.
-
-Event Booking
-
-    POST /api/event/:id/book
-        Description: Book tickets for an event.
-        Request Body:
-
-        json
-
-        {
-          "numberOfTickets": "number"
-        }
-
-        Responses:
-            200 OK: Booking successful.
-            400 Bad Request: Not enough capacity or invalid request.
-
-User Management (Admin Only)
-
-    GET /api/users
-        Description: Retrieve a list of all users (admin only).
-        Responses:
-            200 OK: List of users returned successfully.
-            403 Forbidden: Access denied.
-
-Running Tests
-
-To ensure the application works as expected, tests can be run using:
+Users
+Register a New User
+URL: /api/users/register
+Method: POST
+Body:
+json
+Copy code
+{
+"username": "user123",
+"email": "user@example.com",
+"password": "password123",
+"isAdmin": false
+}
+Response:
+json
+Copy code
+{
+"message": "User registered successfully"
+}
+Login User
+URL: /api/users/login
+Method: POST
+Body:
+json
+Copy code
+{
+"email": "user@example.com",
+"password": "password123"
+}
+Response:
+json
+Copy code
+{
+"message": "Login successful",
+"token": "jwt_token"
+}
+Events
+Create Event (Admin Only)
+URL: /api/event
+Method: POST
+Headers: Authorization: Bearer <JWT>
+Body:
+json
+Copy code
+{
+"eventName": "Charity Run",
+"address": "City Park, Chicago, IL",
+"eventDate": "2025-04-10T08:00:00Z",
+"price": 25,
+"desc": "Participate in a fun run to support local charities.",
+"totalTickets": 100
+}
+Response:
+json
+Copy code
+{
+"\_id": "event_id",
+"eventName": "Charity Run",
+"address": "City Park, Chicago, IL",
+"eventDate": "2025-04-10T08:00:00Z",
+"price": 25,
+"desc": "Participate in a fun run to support local charities.",
+"totalTickets": 100,
+"availableTickets": 100
+}
+Get All Events
+URL: /api/events
+Method: GET
+Response:
+json
+Copy code
+[
+{
+"_id": "event_id",
+"eventName": "Charity Run",
+"address": "City Park, Chicago, IL",
+"eventDate": "2025-04-10T08:00:00Z",
+"price": 25,
+"desc": "Fun run for charity.",
+"availableTickets": 90
+}
+]
+Get Event by ID
+URL: /api/event/:id
+Method: GET
+Response:
+json
+Copy code
+{
+"\_id": "event_id",
+"eventName": "Charity Run",
+"address": "City Park, Chicago, IL",
+"eventDate": "2025-04-10T08:00:00Z",
+"price": 25,
+"desc": "Fun run for charity.",
+"availableTickets": 90
+}
+Update Event (Admin Only)
+URL: /api/event/:id
+Method: PUT
+Headers: Authorization: Bearer <JWT>
+Body:
+json
+Copy code
+{
+"eventName": "Updated Event Name",
+"price": 30
+}
+Response:
+json
+Copy code
+{
+"message": "Event updated successfully",
+"updatedEvent": {
+"\_id": "event_id",
+"eventName": "Updated Event Name",
+"price": 30
+}
+}
+Delete Event (Admin Only)
+URL: /api/event/:id
+Method: DELETE
+Headers: Authorization: Bearer <JWT>
+Response:
+json
+Copy code
+{
+"message": "Event deleted successfully"
+}
+Book an Event
+URL: /api/event/:id/book
+Method: POST
+Headers: Authorization: Bearer <JWT>
+Response:
+json
+Copy code
+{
+"message": "Event booked successfully",
+"remainingTickets": 89
+}
+Testing
+To run tests for the application, use:
 
 bash
-
+Copy code
 npm test
+The test suite includes tests for both authentication and event management endpoints.
 
-The test suite includes tests for user authentication, event management, and error handling, utilizing Jest and Supertest for HTTP assertions.
-Contribution Guidelines
+Troubleshooting
+If you encounter any issues:
 
-Contributions are welcome! If you wish to contribute to this project, please follow these steps:
-
-    Fork the repository.
-    Create a new branch: git checkout -b feature/YourFeature.
-    Make your changes and commit them: git commit -m 'Add some feature'.
-    Push to the branch: git push origin feature/YourFeature.
-    Open a Pull Request.
-
-License
-
-This project is licensed under the MIT License.
+Verify MongoDB is running and accessible.
+Ensure all environment variables are set correctly.
+Check console logs for specific error messages.

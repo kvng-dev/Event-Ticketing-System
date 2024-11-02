@@ -1,11 +1,14 @@
 const express = require("express");
 const {
-  createEvent,
-  getAllEvents,
-  bookEvent,
-  updatEvent,
-  deleteEvent,
+  initializeEvent,
+
+  cancelBooking,
+
+  removeEvent,
   getEventById,
+  bookTicket,
+  getStatus,
+  getAllEvents,
 } = require("../controller/eventController");
 const {
   authorizeAdmin,
@@ -14,14 +17,17 @@ const {
 
 const eventRoute = express.Router();
 
-eventRoute.post("/", authenticate, authorizeAdmin, createEvent);
+eventRoute.post("/initialize", authenticate, authorizeAdmin, initializeEvent);
+
 eventRoute.get("/", getAllEvents);
-eventRoute.post("/:id/book", authenticate, bookEvent);
+
+eventRoute.post("/:id/book", authenticate, bookTicket);
+eventRoute.post("/:id/cancel", authenticate, cancelBooking);
+eventRoute.get("/status/:eventId", getStatus);
 
 eventRoute
   .route("/:id")
   .get(authenticate, getEventById)
-  .put(authenticate, authorizeAdmin, updatEvent)
-  .delete(authenticate, authorizeAdmin, deleteEvent);
+  .delete(authenticate, authorizeAdmin, removeEvent);
 
 module.exports = eventRoute;

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const userSchema = mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
@@ -20,10 +20,9 @@ const userSchema = mongoose.Schema(
     },
     isAdmin: {
       type: Boolean,
-      required: true,
       default: false,
     },
-    eventsBooked: [{ type: mongoose.Schema.Types.ObjectId, ref: "Event" }],
+    bookings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Booking" }],
   },
   {
     timestamps: true,

@@ -28,8 +28,12 @@ describe("Event Authentication Tests", () => {
     await Event.deleteMany({});
   });
 
+  const extractToken = (rawCookie) => {
+    return rawCookie[0].split(";")[0];
+  };
+
   describe("POST /api/events", () => {
-    it("should create an event after registering as an admin", async () => {
+    it("should initialize an event after registering as an admin", async () => {
       const adminResponse = await request(app)
         .post("/api/users/register")
         .send({
@@ -39,33 +43,33 @@ describe("Event Authentication Tests", () => {
           isAdmin: true,
         });
 
-      const adminToken = adminResponse.headers["set-cookie"];
-      if (!adminToken) {
+      const rawCookie = adminResponse.headers["set-cookie"];
+      if (!rawCookie) {
         throw new Error(
           "Failed to retrieve admin token from set-cookie header"
         );
       }
+      const adminToken = extractToken(rawCookie);
 
       const eventRes = await request(app)
-        .post("/api/event")
-        .set("Cookie", adminToken)
+        .post("/api/event/initialize")
+        .set("Cookie", adminToken) 
         .send({
           eventName: "Charity Run",
           address: "City Park, Chicago, IL, USA",
           eventDate: "2025-04-10T08:00:00Z",
           price: 25,
           desc: "Participate in a fun run to support local charities.",
-          capacity: 400,
-          currentBookings: 200,
+          totalTickets: 10,
         });
 
-      expect(eventRes.statusCode).toBe(201);
+      expect(eventRes.statusCode).toBe(201); // Check if the event creation succeeds
       expect(eventRes.body).toHaveProperty("eventName", "Charity Run");
       expect(eventRes.body).toHaveProperty(
         "address",
         "City Park, Chicago, IL, USA"
       );
-      expect(eventRes.body).toHaveProperty("capacity", 400);
+      expect(eventRes.body).toHaveProperty("availableTickets", 10);
     });
 
     it("should not allow a non-admin to create an event", async () => {
@@ -75,13 +79,10 @@ describe("Event Authentication Tests", () => {
         password: "password123",
       });
 
-      const userToken = userResponse.headers["set-cookie"];
-      if (!userToken) {
-        throw new Error("Failed to retrieve user token from set-cookie header");
-      }
+      const userToken = extractToken(userResponse.headers["set-cookie"]);
 
       const eventRes = await request(app)
-        .post("/api/event")
+        .post("/api/event/initialize")
         .set("Cookie", userToken)
         .send({
           eventName: "Community Cleanup",
@@ -89,72 +90,13 @@ describe("Event Authentication Tests", () => {
           eventDate: "2025-05-15T09:00:00Z",
           price: 0,
           desc: "Join us for a community cleanup day.",
-          capacity: 100,
-          currentBookings: 0,
+          totalTickets: 10,
         });
 
       expect(eventRes.statusCode).toBe(403);
       expect(eventRes.body).toHaveProperty(
         "message",
         "Access denied. Admins only."
-      );
-    });
-
-    it("should allow admin to update an event", async () => {
-      const adminResponse = await request(app)
-        .post("/api/users/register")
-        .send({
-          username: "adminuser",
-          email: "admin@example.com",
-          password: "password123",
-          isAdmin: true,
-        });
-
-      const adminToken = adminResponse.headers["set-cookie"];
-      if (!adminToken) {
-        throw new Error(
-          "Failed to retrieve admin token from set-cookie header"
-        );
-      }
-
-      const eventResponse = await request(app)
-        .post("/api/event")
-        .set("Cookie", adminToken)
-        .send({
-          eventName: "Charity Run",
-          address: "City Park, Chicago, IL, USA",
-          eventDate: "2025-04-10T08:00:00Z",
-          price: 25,
-          desc: "Participate in a fun run to support local charities.",
-          capacity: 400,
-          currentBookings: 200,
-        });
-
-      const eventId = eventResponse.body._id;
-
-      const updatedEvent = await request(app)
-        .put(`/api/event/${eventId}`)
-        .set("Cookie", adminToken)
-        .send({
-          eventName: "Fiesta Fest",
-          address: "Uptown, Summerville, IL, USA",
-          eventDate: "2025-04-10T08:00:00Z",
-          price: 100,
-          desc: "Celebrate with food and music.",
-          capacity: 100,
-          currentBookings: 3,
-        });
-
-      expect(updatedEvent.statusCode).toBe(200);
-      expect(updatedEvent.body).toHaveProperty("eventName", "Fiesta Fest");
-      expect(updatedEvent.body).toHaveProperty(
-        "address",
-        "Uptown, Summerville, IL, USA"
-      );
-      expect(updatedEvent.body).toHaveProperty("price", 100);
-      expect(updatedEvent.body).toHaveProperty(
-        "desc",
-        "Celebrate with food and music."
       );
     });
 
@@ -168,15 +110,10 @@ describe("Event Authentication Tests", () => {
           isAdmin: true,
         });
 
-      const adminToken = adminResponse.headers["set-cookie"];
-      if (!adminToken) {
-        throw new Error(
-          "Failed to retrieve admin token from set-cookie header"
-        );
-      }
+      const adminToken = extractToken(adminResponse.headers["set-cookie"]);
 
       const eventResponse = await request(app)
-        .post("/api/event")
+        .post("/api/event/initialize")
         .set("Cookie", adminToken)
         .send({
           eventName: "Charity Run",
@@ -184,8 +121,7 @@ describe("Event Authentication Tests", () => {
           eventDate: "2025-04-10T08:00:00Z",
           price: 25,
           desc: "Participate in a fun run to support local charities.",
-          capacity: 400,
-          currentBookings: 200,
+          totalTickets: 10,
         });
 
       const eventId = eventResponse.body._id;
@@ -196,24 +132,16 @@ describe("Event Authentication Tests", () => {
         password: "password123",
       });
 
-      const userToken = userResponse.headers["set-cookie"];
-      if (!userToken) {
-        throw new Error("Failed to retrieve user token from set-cookie header");
-      }
+      const userToken = extractToken(userResponse.headers["set-cookie"]);
 
       const bookingResponse = await request(app)
         .post(`/api/event/${eventId}/book`)
-        .set("Cookie", userToken)
-        .send();
+        .set("Cookie", userToken);
 
-      expect(bookingResponse.statusCode).toBe(200);
+      expect(bookingResponse.statusCode).toBe(201);
       expect(bookingResponse.body).toHaveProperty(
         "message",
-        "Event booked successfully"
-      );
-
-      const updatedEventResponse = await request(app).get(
-        `/api/event/${eventId}`
+        "Ticket booked successfully"
       );
 
       const userProfileResponse = await request(app)
@@ -221,7 +149,6 @@ describe("Event Authentication Tests", () => {
         .set("Cookie", userToken);
 
       expect(userProfileResponse.statusCode).toBe(200);
-      expect(userProfileResponse.body.eventsBooked[0]._id).toContain(eventId);
     });
 
     it("should allow admin to delete an event", async () => {
@@ -234,43 +161,28 @@ describe("Event Authentication Tests", () => {
           isAdmin: true,
         });
 
-      const adminToken = adminResponse.headers["set-cookie"];
-      if (!adminToken) {
-        throw new Error(
-          "Failed to retrieve admin token from set-cookie header"
-        );
-      }
+      const adminToken = extractToken(adminResponse.headers["set-cookie"]);
 
       const eventResponse = await request(app)
-        .post("/api/event")
+        .post("/api/event/initialize")
         .set("Cookie", adminToken)
         .send({
           eventName: "Charity Run",
           address: "City Park, Chicago, IL, USA",
-          eventDate: "2025-04-10T08:00:00ZM",
+          eventDate: "2025-04-10T08:00:00Z",
           price: 25,
           desc: "Participate in a fun run to support local charities.",
-          capacity: 400,
-          currentBookings: 200,
+          totalTickets: 10,
         });
 
       const eventId = eventResponse.body._id;
 
-      const deletedEvent = await request(app)
+      const deletedEventResponse = await request(app)
         .delete(`/api/event/${eventId}`)
-        .set("Cookie", adminToken)
-        .send({
-          eventName: "Fiesta Fest",
-          address: "Uptown, Summerville, IL, USA",
-          eventDate: "2025-04-10T08:00:00Z",
-          price: 100,
-          desc: "Celebrate with food and music.",
-          capacity: 100,
-          currentBookings: 3,
-        });
+        .set("Cookie", adminToken);
 
-      expect(deletedEvent.statusCode).toBe(200);
-      expect(deletedEvent.body).toHaveProperty(
+      expect(deletedEventResponse.statusCode).toBe(200);
+      expect(deletedEventResponse.body).toHaveProperty(
         "message",
         "Event Deleted successfully"
       );

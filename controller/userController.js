@@ -1,6 +1,8 @@
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 const User = require("../models/userModel");
+const Event = require("../models/eventModel");
+const Booking = require("../models/bookingModel");
 const createToken = require("../utils/createToken");
 const errorHandler = require("../middleware/errorHandler");
 const jwt = require("jsonwebtoken");
@@ -73,17 +75,7 @@ const login = errorHandler(async (req, res) => {
     return res.status(401).json({ message: "Invalid email or password" });
   }
 
-  const token = jwt.sign(
-    { id: user._id, isAdmin: user.isAdmin },
-    process.env.JWT_SECRET,
-    { expiresIn: "1h" }
-  );
-
-  res.cookie("jwt", token, {
-    httpOnly: true,
-    sameSite: "Strict",
-    maxAge: 3600000,
-  });
+  const token = createToken(res, user._id);
 
   return res.status(200).json({
     success: true,
@@ -109,15 +101,43 @@ const getAllUsers = errorHandler(async (req, res) => {
 });
 
 const getCurrentUserProfile = errorHandler(async (req, res) => {
-  const user = await User.findById(req.user._id)
-    .select("-password")
-    .populate("eventsBooked");
+  const user = await User.findById(req.user._id).select("-password");
 
-  if (user) {
-    res.json(user);
-  } else {
-    res.status(404).json({ message: "User does not exist" });
+  if (!user) {
+    return res.status(404).json({ message: "User does not exist" });
   }
+
+  const userBookings = await Booking.find({ userId: req.user._id })
+    .populate({
+      path: "eventId",
+      select: "eventName eventDate address", // Populate event details
+    })
+    .exec();
+
+  console.log({ "Bookings: ": userBookings });
+
+  const confirmedBookings = userBookings.filter(
+    (booking) => booking.status === "booked"
+  );
+
+  const waitingBookings = userBookings.filter(
+    (booking) => booking.status === "waiting"
+  );
+
+  console.log({ "waiting Book": waitingBookings });
+  const waitingListEvents = await Event.find({
+    _id: { $in: waitingBookings.map((booking) => booking.eventId) },
+  }).select("eventName eventDate address");
+
+  const responseData = {
+    _id: user._id,
+    username: user.username,
+    email: user.email,
+    confirmedBookings,
+    waitingList: waitingListEvents,
+  };
+
+  res.json(responseData);
 });
 
 module.exports = {

@@ -16,29 +16,32 @@ const eventSchema = mongoose.Schema({
   price: {
     type: Number,
     required: true,
+    default: 0,
   },
   desc: {
     type: String,
     required: true,
   },
-  capacity: {
-    type: Number,
-    required: true,
-  },
-  currentBookings: {
+  totalTickets: {
     type: Number,
     default: 0,
   },
-  status: {
-    type: String,
-    enum: ["approved", "cancelled"],
-    default: "approved",
-  },
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+  availableTickets: {
+    type: Number,
     required: true,
   },
+  bookings: [
+    {
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      bookedAt: { type: Date, default: Date.now },
+    },
+  ],
+  waitingList: [
+    {
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      addedAt: { type: Date, default: Date.now },
+    },
+  ],
 });
 
 eventSchema.pre("save", function (next) {
